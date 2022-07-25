@@ -1,36 +1,36 @@
 import inquirer from "inquirer";
 import selections from "./src/selections.js"
-import Employee from "./lib/Employee.js"
-import Department from "./lib/Department.js"
-import Role from "./lib/Role.js"
-const data = {Departments:[], Employees:[], Roles:[]}
-inquirer.prompt(selections).then(ans => {
-    if(ans.add_department){
-        data.Departments.push(new Department(ans.add_department))
-        console.log(data.Departments)
-    }
-    if(ans.add_role){
-        data.Roles.push(new Role (ans.add_role, ans.title, ans.salary, ans.department))
-        console.log(data.Roles)
+import db from './config/connection.js';
 
-    }
-    if(ans.first_name){
-        data.Employees.push(new Employee(ans.first_name, ans.last_name, ans.role, ans.manager))
-        console.log(data.Employees)
-    }
+const showAllEmp = async () => {
+    let data = await db.promise().query('SELECT * FROM employee')
 
-    if(ans.select == 'View All Departments'){
-        console.log(data.Departments)
-    }
-    if(ans.select == 'View All Roles'){
-        console.log(data.Roles)
-    }
-    if(ans.select == 'View All Employees'){
-        console.log(data.Employees)
-    }
+    console.table(data[0]);
+    console.log('\n');
+    init();
+};
 
+const addEmp = async (first_name,last_name,role_id,manager_id) => {
+let data = await db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUE ("${first_name}", "${last_name}", "${role_id}", "${manager_id}")`);
+console.log(data);
+}
 
+const addDept = async(add_department) =>{
+    let data = await db.promise().query(`INSERT INTO department(department_name) VALUE ("${add_department}")`)
+}
 
-});
+const showAllDept = async () =>{
+    let data = await db.promise().query('SELECT * from department');
+    console.table(data[0])
+}
+const init = () => {
+    inquirer.prompt(selections).then((selection) => {
+        const { select } = selection;
+        if(select == 'View All Employees') showAllEmp();
+        if(select == 'Add Employee') addEmp(selection.first_name,selection.last_name,selection.role,selection.manager);
+        if(select == 'Add Department') addDept(selection.add_department);
+        if(select == 'View All Departments') showAllDept();
+    });
+};
 
-export default data;
+init();
