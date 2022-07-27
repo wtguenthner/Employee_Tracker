@@ -14,6 +14,12 @@ for (let x=0; x < deptList[0].length; x++){
     info.departments.push(deptList[0][x].department_name)
 }
 
+//Generates the current list of employees for manager selection
+let empList = await db.promise().query('SELECT * from employee');
+for (let x=0; x < empList[0].length; x++){
+   let fullName = empList[0][x].first_name + " " + empList[0][x].last_name 
+    info.employees.push(fullName)
+}
 
 // Selections for prompt
 const selections = [
@@ -60,9 +66,10 @@ const selections = [
     choices: info.roles,
     when: ({select}) => select == 'Add Employee'      
    },
-   {type: 'input',
+   {type: 'list',
     name: "manager",
     message: "Enter manager:",
+    choices: info.employees,
     when: ({select}) => select == 'Add Employee'      
    },
    {type: 'confirm',
@@ -70,8 +77,6 @@ const selections = [
    message: 'Exit?',
    when: ({select}) => select == 'Exit'
    }
-
-
 ]
 
 export default selections

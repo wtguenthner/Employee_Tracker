@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import selections from "./src/selections.js"
+import selections from "./src/selections.js";
 import db from './config/connection.js';
 
 
@@ -11,9 +11,8 @@ const addEmp = async (first_name,last_name,title) => {
     }
 
 const showAllEmp = async () => {
-    let data = await db.promise().query('SELECT * FROM employee')
+    let data = await db.promise().query('SELECT id as ID, first_name as First_Name, last_name as Last_Name, manager as Manager from employee');
     console.table(data[0]);
-    
     init();
 };
 
@@ -26,7 +25,7 @@ const addDept = async(add_department) =>{
 }
 
 const showAllDept = async () =>{
-    let data = await db.promise().query('SELECT * from department');
+    let data = await db.promise().query('SELECT id as ID, department_name as Department from department');
     console.table(data[0])
     init();
 }
@@ -40,7 +39,7 @@ const addRole = async (title, salary, department)=>{
 }
 
 const showAllRoles = async () =>{
-    let data = await db.promise().query('SELECT * from roles');
+    let data = await db.promise().query('SELECT id as ID, title as Title, salary as Salary, department as Department from roles');
     console.table(data[0])
     init();
 }
