@@ -1,35 +1,49 @@
+
+import db from '../config/connection.js';
+const info = {roles:[], departments:[], employees:[]};
+
+//Generates the current roles to add to the choice selection
+let roleList = await db.promise().query('SELECT * from roles');
+for (let x=0; x < roleList[0].length; x++){
+    info.roles.push(roleList[0][x].title)
+}
+
+//Generates the current department list to add to the choice selection
+let deptList = await db.promise().query('SELECT * from department');
+for (let x=0; x < deptList[0].length; x++){
+    info.departments.push(deptList[0][x].department_name)
+}
+
+
+// Selections for prompt
 const selections = [
 
     {type: 'list',
      name: 'select',
      message: 'What would you like to do?',
-     choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Exit']
+     choices: ["View All Roles", "View All Departments", "View All Employees", "Add Department", "Add Role", "Add Employee", "Update Employee Role", "Exit"]
     },
     {type: 'input',
      name: "add_department",
      message: "Enter new department name:",
      when: ({select}) => select == 'Add Department'      
     },
-//     {type: 'input',
-//      name: "add_role",
-//      message: "Enter new role name:",
-//      when: ({select}) => select == 'Add Role'      
-//     },
-//     {type: 'input',
-//     name: "title",
-//     message: "Enter title name:",
-//     when: ({select}) => select == 'Add Role'      
-//    },
-//    {type: 'input',
-//    name: "salary",
-//    message: "Enter salary:",
-//    when: ({select}) => select == 'Add Role'      
-//   },
-//   {type: 'input',
-//   name: "department",
-//   message: "Enter department name:",
-//   when: ({select}) => select == 'Add Role'      
-//  },
+    {type: 'input',
+    name: "title",
+    message: "Enter role name:",
+    when: ({select}) => select == 'Add Role'      
+   },
+   {type: 'input',
+   name: "salary",
+   message: "Enter salary:",
+   when: ({select}) => select == 'Add Role'      
+  },
+  {type: 'list',
+  name: "department",
+  message: "Select Department",
+  choices: info.departments,
+  when: ({select}) => select == 'Add Role'      
+ },
     {type: 'input',
     name: "first_name",
     message: "Enter first name:",
@@ -40,23 +54,24 @@ const selections = [
     message: "Enter last name:",
     when: ({select}) => select == 'Add Employee'      
    },
-   {type: 'input',
-    name: "role",
-    message: "Enter role ID:",
+   {type: 'list',
+    name: "title",
+    message: "Select Role",
+    choices: info.roles,
     when: ({select}) => select == 'Add Employee'      
    },
    {type: 'input',
     name: "manager",
-    message: "Enter manager ID:",
+    message: "Enter manager:",
     when: ({select}) => select == 'Add Employee'      
    },
-//    {type: 'confirm',
-//    name: 'exit',
-//    message: 'Exit?',
-//    when: ({select}) => select == 'Exit'
-//    }
+   {type: 'confirm',
+   name: 'exit',
+   message: 'Exit?',
+   when: ({select}) => select == 'Exit'
+   }
 
 
 ]
 
-export default selections;
+export default selections
