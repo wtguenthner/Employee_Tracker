@@ -11,6 +11,7 @@ const generate = async() => {
 let roleList = await db.promise().query('SELECT * from roles');
 for (let x=info.roles.length; x < roleList[0].length; x++){
    info.roles.push(roleList[0][x].id + " " + roleList[0][x].title)
+   
 }
 
 //Generates the current department list to add to the choice selection
@@ -24,7 +25,9 @@ let empList = await db.promise().query('SELECT * from employee');
 for (let x=info.employees.length; x < empList[0].length; x++){
    let fullName = empList[0][x].id + " " + empList[0][x].first_name + " " + empList[0][x].last_name
     info.employees.push(fullName)
+    
 }
+
 }
 
 //List of prompt selections
@@ -77,6 +80,18 @@ const selections = [
     message: "Enter manager:",
     choices: info.employees,
     when: ({select}) => select == 'Add Employee'      
+   },
+   {type: 'list',
+   name: "update_name",
+   message: "Which employee would you like to update?",
+   choices: info.employees,
+   when: ({select}) => select == 'Update Employee Role'
+   },
+   {type: 'list',
+   name: "update_role",
+   message: "What is the employees new role?",
+   choices: info.roles,
+   when: ({select}) => select == 'Update Employee Role'
    },
    {type: 'confirm',
    name: 'exit',
@@ -135,16 +150,30 @@ const showAllRoles = async () =>{
     init();
 }
 
+//Updates the employee role
+const update = async (name, role) =>{
+    
+    let nameSplit = name.split(" ");
+    let roleSplit =role.split(" ");
+    
+        let data = await db.promise().query(`UPDATE employee SET role_id = '${roleSplit[0]}'WHERE first_name = '${nameSplit[1]}'`);
+        if(roleSplit.length > 2){
+            console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]} ${roleSplit[2]}`)
+        }else{
+        console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]}`)
+        }
+    init();
+}
 const init = async() => {
    inquirer.prompt(selections).then((selection) => {
-        const { select, first_name, last_name,exit,manager,title, salary, department, add_department, role } = selection;
+        const { select, first_name, last_name,exit,manager,title, salary, department, add_department, role, update_name, update_role } = selection;
         if(select == 'View All Employees') showAllEmp();
         if(select == 'Add Employee') addEmp(first_name,last_name,title, manager);
         if(select == 'Add Department') addDept(add_department);
         if(select == 'View All Departments') showAllDept();
         if(select == 'Add Role') addRole(title, salary, department);
         if(select == 'View All Roles') showAllRoles();
-
+        if(select== 'Update Employee Role') update(update_name, update_role);
         if(select == 'Exit'){
             if(exit){
                 console.log('Application closed.')
