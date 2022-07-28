@@ -97,7 +97,7 @@ const addEmp = async (first_name,last_name,title, manager) => {
     }
 
 const showAllEmp = async () => {
-    let data = await db.promise().query(`select employee.first_name as "First Name", employee.last_name as "Last Name", employee.manager_id, roles.title as Title, roles.salary as Salary, department.department_name as Department from employee left join roles on employee.role_id = roles.id left join department ON roles.department_id = department.id`);
+    let data = await db.promise().query(`select a.first_name as "First Name", a.last_name as "Last Name", roles.title as Title, roles.salary as Salary, department.department_name as Department, CONCAT(b.first_name, ' ', b.last_name) as Manager from employee a left join employee b on a.manager_id = b.id left join roles on a.role_id = roles.id left join department ON roles.department_id = department.id`);
     console.table(data[0]);
     
     init();
