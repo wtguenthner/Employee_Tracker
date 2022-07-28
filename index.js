@@ -75,11 +75,16 @@ const selections = [
     choices: info.roles,
     when: ({select}) => select == 'Add Employee'      
    },
+   {type: 'confirm',
+   name: "manager_check",
+   message: 'Does the employee have a manager?',
+   when: ({select}) => select == 'Add Employee'
+   },
    {type: 'list',
     name: "manager",
     message: "Enter manager:",
     choices: info.employees,
-    when: ({select}) => select == 'Add Employee'      
+    when: ({manager_check}) => manager_check == true      
    },
    {type: 'list',
    name: "update_name",
@@ -102,10 +107,14 @@ const selections = [
 
 
 //Employee Functions
-const addEmp = async (first_name,last_name,title, manager) => {
+const addEmp = async (first_name,last_name,title, manager,manager_check) => {
     let roleID = title.split(" ");
-    let managerID = manager.split(" ");
-    let data = await db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${first_name}','${last_name}','${roleID[0]}','${managerID[0]}')`);
+    let managerID = null;
+    if(manager_check){
+       managerID = manager.split(" ")
+       managerID = `"${managerID[0]}"`
+    }
+    let data = await db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${first_name}','${last_name}','${roleID[0]}',${managerID})`);
     console.log(`${first_name} ${last_name} has been added to the roster.`);
     generate();
     init();
@@ -155,20 +164,20 @@ const update = async (name, role) =>{
     
     let nameSplit = name.split(" ");
     let roleSplit =role.split(" ");
-    
-        let data = await db.promise().query(`UPDATE employee SET role_id = '${roleSplit[0]}'WHERE first_name = '${nameSplit[1]}'`);
-        if(roleSplit.length > 2){
+    let data = await db.promise().query(`UPDATE employee SET role_id = '${roleSplit[0]}'WHERE first_name = '${nameSplit[1]}'`);
+        
+    if(roleSplit.length > 2){
             console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]} ${roleSplit[2]}`)
         }else{
-        console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]}`)
+            console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]}`)
         }
     init();
 }
 const init = async() => {
    inquirer.prompt(selections).then((selection) => {
-        const { select, first_name, last_name,exit,manager,title, salary, department, add_department, role, update_name, update_role } = selection;
+        const {select, first_name, last_name,exit,manager,title, salary, department, add_department, update_name, update_role, manager_check} = selection;
         if(select == 'View All Employees') showAllEmp();
-        if(select == 'Add Employee') addEmp(first_name,last_name,title, manager);
+        if(select == 'Add Employee') addEmp(first_name,last_name,title, manager, manager_check);
         if(select == 'Add Department') addDept(add_department);
         if(select == 'View All Departments') showAllDept();
         if(select == 'Add Role') addRole(title, salary, department);
