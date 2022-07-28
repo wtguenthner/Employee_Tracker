@@ -115,15 +115,18 @@ const addEmp = async (first_name,last_name,title, manager,manager_check) => {
        managerID = `"${managerID[0]}"`
     }
     let data = await db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${first_name}','${last_name}','${roleID[0]}',${managerID})`);
+    console.log(" ");
     console.log(`${first_name} ${last_name} has been added to the roster.`);
+    console.log(" ");
     generate();
     init();
     }
 
 const showAllEmp = async () => {
     let data = await db.promise().query(`select a.first_name as "First Name", a.last_name as "Last Name", roles.title as Title, roles.salary as Salary, department.department_name as Department, CONCAT(b.first_name, ' ', b.last_name) as Manager from employee a left join employee b on a.manager_id = b.id left join roles on a.role_id = roles.id left join department ON roles.department_id = department.id`);
+    console.log(" ");
     console.table(data[0]);
-    
+    console.log(" ");
     init();
 };
 
@@ -132,14 +135,18 @@ const showAllEmp = async () => {
 const addDept = async(add_department) =>{
 
     let data = await db.promise().query(`INSERT INTO department(department_name) VALUE ("${add_department}")`)
+    console.log(" ");
     console.log(`${add_department} has been added to the list of departments`)
+    console.log(" ");
     generate();
     init();
 }
 
 const showAllDept = async () =>{
     let data = await db.promise().query('SELECT id as ID, department_name as Department from department ');
+    console.log(" ");
     console.table(data[0])
+    console.log(" ");
     init();
 }
 
@@ -148,14 +155,18 @@ const showAllDept = async () =>{
 const addRole = async (title, salary, department_id)=>{
     let deptID = department_id.split(" ");
     let data = await db.promise().query(`INSERT INTO roles (title, salary, department_id) VALUE ("${title}", ${salary}, "${deptID[0]}")`);
+    console.log(" ");
     console.log(`${title} has been added to the list of roles.`);
+    console.log(" ");
     generate();
     init(); 
 }
 
 const showAllRoles = async () =>{
     let data = await db.promise().query('SELECT roles.id as ID, roles.title as Title, roles.salary as Salary, department.department_name as Department from roles join department ON roles.department_id = department.id;');
+    console.log(" ");
     console.table(data[0])
+    console.log(" ");
     init();
 }
 
@@ -167,9 +178,13 @@ const update = async (name, role) =>{
     let data = await db.promise().query(`UPDATE employee SET role_id = '${roleSplit[0]}'WHERE first_name = '${nameSplit[1]}'`);
         
     if(roleSplit.length > 2){
+            console.log(" ");
             console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]} ${roleSplit[2]}`)
+            console.log(" ");
         }else{
+            console.log(" ");
             console.log(`${nameSplit[1]} ${nameSplit[2]}'s role has been updated to ${roleSplit[1]}`)
+            console.log(" ");
         }
     init();
 }
