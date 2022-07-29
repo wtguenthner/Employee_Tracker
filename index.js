@@ -1,7 +1,8 @@
 import inquirer from "inquirer";
-// import selections from "./src/selections.js";
 import db from './config/connection.js';
 import ctable from 'console.table'
+
+//Set array objects for storing the list of roles, departments and employees
 const info = {roles:[], departments:[], employees:[]};
 
 //Function for generating the list of roles, employees and departments
@@ -25,9 +26,7 @@ let empList = await db.promise().query('SELECT * from employee');
 for (let x=info.employees.length; x < empList[0].length; x++){
    let fullName = empList[0][x].id + " " + empList[0][x].first_name + " " + empList[0][x].last_name
     info.employees.push(fullName)
-    
-}
-
+    }
 }
 
 //List of prompt selections
@@ -120,7 +119,7 @@ const addEmp = async (first_name,last_name,title, manager,manager_check) => {
     console.log(" ");
     generate();
     init();
-    }
+}
 
 const showAllEmp = async () => {
     let data = await db.promise().query(`select a.first_name as "First Name", a.last_name as "Last Name", roles.title as Title, roles.salary as Salary, department.department_name as Department, CONCAT(b.first_name, ' ', b.last_name) as Manager from employee a left join employee b on a.manager_id = b.id left join roles on a.role_id = roles.id left join department ON roles.department_id = department.id`);
@@ -188,6 +187,7 @@ const update = async (name, role) =>{
         }
     init();
 }
+
 const init = async() => {
    inquirer.prompt(selections).then((selection) => {
         const {select, first_name, last_name,exit,manager,title, salary, department, add_department, update_name, update_role, manager_check} = selection;
