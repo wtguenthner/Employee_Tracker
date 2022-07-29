@@ -1,7 +1,7 @@
 
 # Employee Tracker
 
-This application allows you to store general information about their employees including name, title, salary, department and manager they report to through a MYSQL database.
+This application allows you to store general information about your employees including name, title, salary, department and manager they report to through a MYSQL database.
 Upon loading the application you are give a prompt of selections to decide how you would like to view or manipulate the database. 
 
 ## Screenshots
