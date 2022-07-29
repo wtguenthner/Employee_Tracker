@@ -21,9 +21,8 @@ Upon loading the application you are give a prompt of selections to decide how y
 
 ## Deployment
 
-In the terminal type:
+    npm start
 
-    'node index.js'
 ## Installation
 "npm i" to install all necessary dependencies
 
